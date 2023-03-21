@@ -23,7 +23,7 @@ jobs:
     - name: Test with flake8 and django tests
       run: |
         cd ..
-        python -m flake8 --config setup.cfg ./
+        python -m flake8 --config=./setup.cfg ./
         cd api_yamdb/
         python manage.py test
   build_and_push_to_docker_hub:
