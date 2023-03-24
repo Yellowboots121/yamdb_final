@@ -11,7 +11,7 @@ services:
     image: yellowboots/api_final:latest
     restart: always
     ports:
-     - "5000:5000"
+     - "8000:8000"
     depends_on:
       - db
     env_file:
