@@ -73,6 +73,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+            sudo docker-compose pull yellowboots/api_final
             sudo docker-compose stop
             sudo docker-compose rm web
             touch .env
