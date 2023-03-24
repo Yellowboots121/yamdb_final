@@ -21,12 +21,16 @@ jobs:
         pip install -r requirements.txt
         cd ..
 
-    - name: Test with flake8 and django tests
+    - name: Test with flake8
+      run: |
+        python -m flake8
+
+    - name: Test with django tests
       run: |
         pytest
-        python -m flake8
         cd api_yamdb/
         python manage.py test
+
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
