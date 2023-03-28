@@ -1,123 +1,147 @@
 from django.contrib import admin
 from import_export import resources
+from import_export.fields import Field
 from import_export.admin import ImportExportModelAdmin
 
-from .models import Category, Comments, Genre, Review, Title, User
+from reviews.models import Category, Genre, Title, TitleGenre, Review, Comment
 
 
-class UserResource(resources.ModelResource):
+class CategoryResource(resources.ModelResource):
     class Meta:
-        model = User
+        model = Category
         fields = (
             'id',
-            'username',
-            'email',
-            'first_name',
-            'last_name',
-            'bio',
-            'role',
+            'name',
+            'slug',
         )
 
 
-@admin.register(User)
-class UserAdmin(ImportExportModelAdmin):
-    resource_classes = [UserResource]
+class CategoryAdmin(ImportExportModelAdmin):
+    resource_classes = (CategoryResource,)
     list_display = (
-        'username',
-        'email',
-        'role',
-        'bio',
-        'first_name',
-        'last_name',
+        'id',
+        'name',
+        'slug',
+    )
+
+
+class GenreResource(resources.ModelResource):
+    class Meta:
+        model = Genre
+        fields = (
+            'id',
+            'name',
+            'slug',
+        )
+
+
+class GenreAdmin(ImportExportModelAdmin):
+    resource_classes = (GenreResource,)
+    list_display = (
+        'id',
+        'name',
+        'slug',
     )
 
 
 class TitleResource(resources.ModelResource):
     class Meta:
         model = Title
-        fields = ('id',
-                  'name',
-                  'year',
-                  'description',
-                  'category',
-                  'genre')
+        fields = (
+            'id',
+            'name',
+            'year',
+            'category'
+        )
 
 
-@admin.register(Title)
 class TitleAdmin(ImportExportModelAdmin):
+    resource_classes = (TitleResource,)
     list_display = (
         'id',
         'name',
         'year',
-        'description',
-        'category',
+        'category'
     )
-    list_editable = ('category',)
-    search_fields = ('name',)
-    list_filter = ('year',)
 
 
-class CategoryResource(resources.ModelResource):
+class TitleGenreResource(resources.ModelResource):
+    title = Field(attribute='title_id', column_name='title_id')
+    genre = Field(attribute='genre_id', column_name='genre_id')
+
     class Meta:
-        Model = Category
-        fields = ('id', 'name', 'slug')
+        model = TitleGenre
+        fields = (
+            'id',
+            'title',
+            'genre',
+        )
 
 
-@admin.register(Category)
-class CategoryAdmin(ImportExportModelAdmin):
-    list_display = ('name', 'slug')
+class TitleGenreAdmin(ImportExportModelAdmin):
+    resource_classes = (TitleGenreResource,)
+    list_display = (
+        'id',
+        'title',
+        'genre',
+    )
 
 
-class GenreResource(resources.ModelResource):
+class ReviewResource(resources.ModelResource):
+    title = Field(attribute='title_id', column_name='title_id')
+
     class Meta:
-        model = Genre
-        fields = ('id', 'name', 'slug')
+        model = Review
+        fields = (
+            'id',
+            'title',
+            'text',
+            'author',
+            'score',
+            'pub_date',
+        )
 
 
-@admin.register(Genre)
-class GenreAdmin(ImportExportModelAdmin):
-    list_display = ('name', 'slug')
+class ReviewAdmin(ImportExportModelAdmin):
+    resource_classes = (ReviewResource,)
+    list_display = (
+        'id',
+        'title',
+        'text',
+        'author',
+        'score',
+        'pub_date',
+    )
 
 
 class CommentResource(resources.ModelResource):
+    review = Field(attribute='review_id', column_name='review_id')
+
     class Meta:
-        model = Comments
-        fields = ('id',
-                  'review_id',
-                  'text',
-                  'author',
-                  'pub_date',
-                  )
+        model = Comment
+        fields = (
+            'id',
+            'review',
+            'text',
+            'author',
+            'pub_date',
+        )
 
 
-@admin.register(Comments)
 class CommentAdmin(ImportExportModelAdmin):
+    resource_classes = (CommentResource,)
     list_display = (
-        'review_id',
+        'id',
+        'review',
         'text',
         'author',
         'pub_date',
     )
 
 
-class ReviewResource(resources.ModelResource):
-    class Meta:
-        model = Review
-        fields = ('id',
-                  'title_id',
-                  'text',
-                  'author',
-                  'score',
-                  'pub_date',
-                  )
-
-
-@admin.register(Review)
-class ReviewAdmin(ImportExportModelAdmin):
-    list_display = (
-        'title_id',
-        'text',
-        'author',
-        'score',
-        'pub_date'
-    )
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Genre, GenreAdmin)
+admin.site.register(Title, TitleAdmin)
+admin.site.register(TitleGenre, TitleGenreAdmin)
+admin.site.register(Review, ReviewAdmin)
+admin.site.register(Comment, CommentAdmin)
